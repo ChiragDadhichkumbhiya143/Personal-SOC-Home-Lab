@@ -16,3 +16,39 @@ Raw Events (Sysmon/Suricata) -> Agent Shipper (Logstash/Wazuh Agent) -> SIEM Rul
 ## 3. Communication Protocols
 - Agent-Manager Tunnel: TCP Ports 1514 / 1515 (AES Encrypted Transport)
 - Syslog Transport: UDP 514 / TCP 601
+
+```mermaid
+flowchart TB
+    subgraph Isolated_Subnet ["Isolated Lab Subnet (192.168.100.0/24)"]
+        
+        subgraph Target_Zone ["Target Endpoint (192.168.100.10)"]
+            WinOS["Windows 7 OS Kernel"]
+            Sysmon["Sysmon Driver (Ring-0)"]
+            WAgent["Wazuh Agent Service"]
+            
+            WinOS -->|Process/Net Events| Sysmon
+            Sysmon -->|EVTX Operational Log| WAgent
+        end
+
+        subgraph SIEM_Zone ["SIEM Core (192.168.100.50)"]
+            WManager["Wazuh Manager (TCP 1514)"]
+            Decoders["Decoder & Parser Engine"]
+            Ruleset["Detection Rules Engine"]
+            Indexer["OpenSearch Indexer"]
+            Dashboard["Wazuh Dashboard UI"]
+
+            WManager --> Decoders
+            Decoders -->|Structured JSON| Ruleset
+            Ruleset -->|Alert Trigger| Indexer
+            Indexer <--> Dashboard
+        end
+
+        subgraph Attack_Zone ["Attacker Node (192.168.100.100)"]
+            ART["Atomic Red Team / Metasploit"]
+        end
+
+    end
+
+    %% Communication Flows
+    WAgent -->|Encrypted TCP 1514| WManager
+    ART ==>|Threat Emulation / Attacks| Target_Zone
