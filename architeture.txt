@@ -1,0 +1,25 @@
++-----------------------------------------------------------------------------------+
+|                        VirtualBox Isolated Subnet (192.168.56.0/24)               |
+|                                                                                   |
+|   +-----------------------+                         +-------------------------+   |
+|   |   Kali Linux          |                         |   Windows 7 SP1         |   |
+|   |   (Attacker Machine)  |                         |   (Victim Endpoint)     |   |
+|   |                       |  1. Attack Simulation   |                         |   |
+|   |   IP: 192.168.56.10   | ----------------------> |   IP: 192.168.56.20     |   |
+|   |   - Nmap              |  (Nmap/Metasploit)      |   - Microsoft Sysmon    |   |
+|   |   - Metasploit        |                         |   - Win Event Logging   |   |
+|   +-----------------------+                         +-------------------------+   |
+|                                                                  |                |
+|                                                                  | 2. Sysmon Logs |
+|                                                                  |    & Telemetry |
+|                                                                  v                |
+|                                                     +-------------------------+   |
+|                                                     |   Kali Purple           |   |
+|                                                     |   (SOC / SIEM Engine)   |   |
+|                                                     |                         |   |
+|                                                     |   IP: 192.168.56.30     |   |
+|                                                     |   - Log Ingestion       |   |
+|                                                     |   - Custom Alert Rules  |   |
+|                                                     |   - Monitoring Dashboard|   |
+|                                                     +-------------------------+   |
++-----------------------------------------------------------------------------------+
